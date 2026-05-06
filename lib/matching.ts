@@ -2,8 +2,20 @@ import { supabase, type Senior, type Job } from './supabase'
 
 export function normalizeRegion(region: string): string {
   return region
+    .replace('서울특별시', '서울')
+    .replace('경기도', '경기')
+    .replace('인천광역시', '인천')
     .replace(/특별시|광역시|특별자치시|특별자치도/g, '')
     .replace(/도$/g, '')
+    .trim()
+}
+
+export function normalizeJobType(value: string): string {
+  return value
+    .replace('경비직', '경비')
+    .replace('청소직', '청소')
+    .replace('조리직', '조리')
+    .replace('돌봄직', '돌봄')
     .trim()
 }
 
@@ -17,7 +29,7 @@ export function calculateScore(senior: Senior, job: Job): {
     normalizeRegion(senior.region) === normalizeRegion(job.region) ? 3 : 0
 
   const score_job =
-    senior.desired_job.trim() === job.job_type.trim() ? 2 : 0
+    normalizeJobType(senior.desired_job) === normalizeJobType(job.job_type) ? 2 : 0
 
   const seniorCareer = senior.career_years ?? 0
   const requiredCareer = job.required_career ?? 0

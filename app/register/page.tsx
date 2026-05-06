@@ -75,15 +75,15 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gray-50 py-10 px-4">
       <div className="max-w-lg mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          시니어 구직 등록
+          시니어 일자리 신청하기
         </h1>
-        <p className="text-lg text-gray-600 mb-8">
-          아래 정보를 입력하시면 적합한 일자리를 자동으로 추천해 드립니다.
+        <p className="text-xl text-gray-600 mb-8">
+          아래 정보를 입력하시면 가장 적합한 일자리를 바로 찾아드립니다.
         </p>
 
         {success && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-400 rounded-lg text-green-800 text-lg font-medium">
-            등록이 완료되었습니다. 담당자가 확인 후 연락드립니다.
+          <div className="mb-6 p-4 bg-green-50 border border-green-400 rounded-lg text-green-800 text-xl font-bold text-center">
+            등록이 완료되었습니다. 담당자가 곧 연락드립니다!
           </div>
         )}
 
@@ -95,10 +95,11 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow p-8 space-y-6">
           <div>
-            <label className="block text-lg font-semibold text-gray-800 mb-2">
+            <label htmlFor="name" className="block text-lg font-semibold text-gray-800 mb-2">
               이름 <span className="text-red-500">*</span>
             </label>
             <input
+              id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -108,10 +109,12 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-lg font-semibold text-gray-800 mb-2">
+            <label htmlFor="region" className="block text-xl font-bold text-gray-800 mb-2">
               거주 지역 <span className="text-red-500">*</span>
             </label>
+            <p className="text-base text-gray-500 mb-2">어디에서 일하고 싶으세요?</p>
             <select
+              id="region"
               value={region}
               onChange={(e) => setRegion(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg min-h-[52px] focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white"
@@ -124,10 +127,12 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-lg font-semibold text-gray-800 mb-2">
+            <label htmlFor="jobType" className="block text-xl font-bold text-gray-800 mb-2">
               희망 직종 <span className="text-red-500">*</span>
             </label>
+            <p className="text-base text-gray-500 mb-2">어떤 일을 하시겠어요?</p>
             <select
+              id="jobType"
               value={desiredJob}
               onChange={(e) => setDesiredJob(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg min-h-[52px] focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white"
@@ -140,10 +145,11 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-lg font-semibold text-gray-800 mb-2">
+            <label htmlFor="career" className="block text-lg font-semibold text-gray-800 mb-2">
               경력 <span className="text-gray-400 font-normal">(선택)</span>
             </label>
             <input
+              id="career"
               type="number"
               value={careerYears}
               onChange={(e) => setCareerYears(e.target.value)}

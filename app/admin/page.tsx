@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase, type Senior, type Job } from '@/lib/supabase'
+import { AlertCircle, Clock, CheckCircle, PlusCircle, RefreshCw, LayoutDashboard } from 'lucide-react'
 
 const REGIONS = [
   '서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종',
@@ -172,32 +173,58 @@ export default function AdminPage() {
       <div className="max-w-5xl mx-auto space-y-10">
 
         {/* 헤더 */}
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">담당자 관리 화면</h1>
-            <p className="text-lg text-gray-600 mt-1">일자리 공고 관리 및 매칭 현황 확인</p>
+        <div className="flex items-center justify-between flex-wrap gap-4 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-blue-100 rounded-xl">
+              <LayoutDashboard className="w-8 h-8 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">담당자 관리 화면</h1>
+              <p className="text-lg text-gray-600">일자리 공고 관리 및 매칭 현황 확인</p>
+            </div>
           </div>
-          <a href="/register" className="text-lg text-blue-600 hover:underline">
+          <a href="/register" className="text-xl font-bold text-blue-600 hover:text-blue-700 px-6 py-3 bg-blue-50 rounded-xl transition-colors">
             시니어 등록 화면 →
           </a>
         </div>
 
         {/* KPI 카드 */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white rounded-2xl shadow p-6 border-l-4 border-orange-400">
-            <p className="text-base text-gray-500 font-medium mb-1">미매칭 시니어</p>
-            <p className="text-4xl font-bold text-orange-600">{kpi.unmatched}명</p>
-            <p className="text-base text-gray-400 mt-1">매칭 결과가 없거나 0점</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 flex items-center gap-5">
+            <div className="p-4 bg-orange-100 rounded-2xl">
+              <AlertCircle className="w-8 h-8 text-orange-600" />
+            </div>
+            <div>
+              <p className="text-base text-gray-500 font-bold mb-1">미매칭 시니어</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-black text-orange-600">{kpi.unmatched}</span>
+                <span className="text-lg font-bold text-gray-400">명</span>
+              </div>
+            </div>
           </div>
-          <div className="bg-white rounded-2xl shadow p-6 border-l-4 border-blue-400">
-            <p className="text-base text-gray-500 font-medium mb-1">매칭 대기</p>
-            <p className="text-4xl font-bold text-blue-600">{kpi.pending}건</p>
-            <p className="text-base text-gray-400 mt-1">status: pending</p>
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 flex items-center gap-5">
+            <div className="p-4 bg-blue-100 rounded-2xl">
+              <Clock className="w-8 h-8 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-base text-gray-500 font-bold mb-1">매칭 대기</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-black text-blue-600">{kpi.pending}</span>
+                <span className="text-lg font-bold text-gray-400">건</span>
+              </div>
+            </div>
           </div>
-          <div className="bg-white rounded-2xl shadow p-6 border-l-4 border-green-400">
-            <p className="text-base text-gray-500 font-medium mb-1">배정 완료</p>
-            <p className="text-4xl font-bold text-green-600">{kpi.assigned}건</p>
-            <p className="text-base text-gray-400 mt-1">assigned / done</p>
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 flex items-center gap-5">
+            <div className="p-4 bg-green-100 rounded-2xl">
+              <CheckCircle className="w-8 h-8 text-green-600" />
+            </div>
+            <div>
+              <p className="text-base text-gray-500 font-bold mb-1">배정 완료</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-black text-green-600">{kpi.assigned}</span>
+                <span className="text-lg font-bold text-gray-400">건</span>
+              </div>
+            </div>
           </div>
         </div>
 

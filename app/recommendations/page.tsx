@@ -101,7 +101,7 @@ function RecommendationsContent() {
     )
   }
 
-  const hasMatches = matches.length > 0 && matches.some((m) => m.score > 0)
+  const hasMatches = matches.length > 0 && matches.some((m) => m.score >= 2)
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4">
@@ -123,7 +123,7 @@ function RecommendationsContent() {
           </div>
         ) : (
           <div className="space-y-4">
-            {matches.map((match) => (
+            {matches.filter(m => m.score >= 2).map((match) => (
               <div
                 key={match.id}
                 className="bg-white rounded-2xl shadow p-6 border border-gray-100"
