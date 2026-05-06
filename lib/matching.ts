@@ -16,6 +16,7 @@ export function normalizeJobType(value: string): string {
     .replace('청소직', '청소')
     .replace('조리직', '조리')
     .replace('돌봄직', '돌봄')
+    .replace(/\/.*/, '') // Remove everything after /
     .trim()
 }
 
