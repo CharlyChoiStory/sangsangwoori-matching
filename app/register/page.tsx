@@ -8,15 +8,8 @@ const REGIONS = [
   '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'
 ]
 const JOB_TYPES = [
-  '경비/보안',
-  '청소/미백',
-  '조리/급식',
-  '아이돌봄',
-  '노인돌봄/요양',
-  '배송/운전',
-  '사무/행정',
-  '교육/상담',
-  '기타'
+  '경비/보안', '청소/미백', '조리/급식', '아이돌봄', '노인돌봄/요양',
+  '배송/운전', '사무/행정', '교육/상담', '기타'
 ]
 
 export default function RegisterPage() {
@@ -26,12 +19,14 @@ export default function RegisterPage() {
   const [careerYears, setCareerYears] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [registeredSeniorId, setRegisteredSeniorId] = useState<string | null>(null)
   const [error, setError] = useState('')
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
     setSuccess(false)
+    setRegisteredSeniorId(null)
 
     if (!name.trim() || !region || !desiredJob) {
       setError('이름, 지역, 희망 직종은 반드시 입력해야 합니다.')
@@ -63,6 +58,7 @@ export default function RegisterPage() {
       body: JSON.stringify({ type: 'senior', id: data.id }),
     })
 
+    setRegisteredSeniorId(data.id)
     setSuccess(true)
     setName('')
     setRegion('')
@@ -82,8 +78,18 @@ export default function RegisterPage() {
         </p>
 
         {success && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-400 rounded-lg text-green-800 text-xl font-bold text-center">
-            등록이 완료되었습니다. 담당자가 곧 연락드립니다!
+          <div className="mb-6 p-5 bg-green-50 border border-green-400 rounded-lg">
+            <p className="text-xl font-bold text-green-800 text-center mb-4">
+              등록이 완료되었습니다. 담당자가 곧 연락드립니다!
+            </p>
+            {registeredSeniorId && (
+              <a
+                href={`/recommendations?senior_id=${registeredSeniorId}`}
+                className="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg py-3 text-lg transition-colors"
+              >
+                내 추천 일자리 바로 보기 →
+              </a>
+            )}
           </div>
         )}
 
@@ -120,9 +126,7 @@ export default function RegisterPage() {
               className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg min-h-[52px] focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white"
             >
               <option value="">지역을 선택하세요</option>
-              {REGIONS.map((r) => (
-                <option key={r} value={r}>{r}</option>
-              ))}
+              {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
 
@@ -138,9 +142,7 @@ export default function RegisterPage() {
               className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg min-h-[52px] focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white"
             >
               <option value="">직종을 선택하세요</option>
-              {JOB_TYPES.map((j) => (
-                <option key={j} value={j}>{j}</option>
-              ))}
+              {JOB_TYPES.map((j) => <option key={j} value={j}>{j}</option>)}
             </select>
           </div>
 
@@ -169,12 +171,6 @@ export default function RegisterPage() {
             {loading ? '등록 중...' : '등록하기'}
           </button>
         </form>
-
-        <div className="mt-6 text-center">
-          <a href="/admin" className="text-lg text-blue-600 hover:underline">
-            담당자 관리 화면으로 이동 →
-          </a>
-        </div>
       </div>
     </div>
   )

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상상우리 매칭 시스템 — 기능 개선 보고서</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    font-size: 16px;
+    background: #f0f4ff;
+    color: #1a1a2e;
+    line-height: 1.6;
+  }
+
+  /* ── 전체 레이아웃 ── */
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+  }
+
+  /* ── 헤더 ── */
+  .header {
+    background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
+    color: white;
+    border-radius: 20px;
+    padding: 36px 40px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .header-icon {
+    font-size: 56px;
+    line-height: 1;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-size: 16px;
+    opacity: 0.85;
+  }
+  .badge-date {
+    margin-left: auto;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* ── 섹션 공통 ── */
+  .section { margin-bottom: 32px; }
+  .section-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1d4ed8;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 22px;
+    background: #1d4ed8;
+    border-radius: 2px;
+  }
+
+  /* ── 요약 통계 카드 ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 22px 16px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  .stat-num {
+    font-size: 36px;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 13px; color: #6b7280; font-weight: 600; }
+  .blue { color: #1d4ed8; }
+  .green { color: #059669; }
+  .yellow { color: #d97706; }
+  .purple { color: #7c3aed; }
+
+  /* ── 비교 테이블 ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    font-size: 15px;
+  }
+  .compare-table thead tr {
+    background: #1d4ed8;
+    color: white;
+  }
+  .compare-table th {
+    padding: 14px 20px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .compare-table td {
+    padding: 13px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: top;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:nth-child(even) td { background: #fafafa; }
+  .before { color: #9ca3af; }
+  .after { color: #059669; font-weight: 600; }
+  .tag-page {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #eff6ff;
+    color: #1d4ed8;
+    margin-bottom: 2px;
+  }
+  .icon-x { color: #ef4444; font-weight: 700; }
+  .icon-o { color: #059669; font-weight: 700; }
+
+  /* ── 흐름도 ── */
+  .flow {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  .flow-subtitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .flow-cols {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 0;
+    align-items: start;
+  }
+  .flow-col-title {
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    padding: 10px 0 16px;
+    border-radius: 12px 12px 0 0;
+  }
+  .flow-before-title { background: #fef2f2; color: #dc2626; }
+  .flow-after-title  { background: #f0fdf4; color: #059669; }
+  .flow-arrow { display: flex; align-items: center; justify-content: center; font-size: 28px; color: #9ca3af; padding-top: 8px; }
+
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .flow-step-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .step-before { background: #fef2f2; color: #7f1d1d; }
+  .step-after  { background: #f0fdf4; color: #14532d; }
+  .step-new    { background: #eff6ff; color: #1e3a8a; }
+
+  /* ── 점수 배지 시각화 ── */
+  .score-section {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .score-card {
+    border-radius: 14px;
+    padding: 18px;
+    text-align: center;
+  }
+  .score-num {
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+  .score-name { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .score-desc { font-size: 13px; opacity: 0.75; line-height: 1.4; }
+  .s-blue   { background: #eff6ff; }
+  .s-purple { background: #f5f3ff; }
+  .s-green  { background: #f0fdf4; }
+
+  .badge-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 16px;
+  }
+  .badge {
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 800;
+    border: 2px solid;
+  }
+  .badge-gold   { background: #fef3c7; color: #92400e; border-color: #d97706; }
+  .badge-green2 { background: #d1fae5; color: #065f46; border-color: #059669; }
+  .badge-gray2  { background: #f3f4f6; color: #374151; border-color: #9ca3af; }
+
+  /* ── 기능 목록 ── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .feature-card {
+    background: white;
+    border-radius: 14px;
+    padding: 18px 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border-left: 4px solid;
+  }
+  .fc-blue   { border-color: #1d4ed8; }
+  .fc-green  { border-color: #059669; }
+  .fc-yellow { border-color: #d97706; }
+  .fc-purple { border-color: #7c3aed; }
+  .fc-red    { border-color: #dc2626; }
+  .fc-indigo { border-color: #4f46e5; }
+  .feature-icon { font-size: 24px; margin-bottom: 8px; }
+  .feature-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; color: #111827; }
+  .feature-desc  { font-size: 13px; color: #6b7280; line-height: 1.5; }
+
+  /* ── 푸터 ── */
+  .footer {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 13px;
+    color: #9ca3af;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+  }
+
+  @media print {
+    body { background: white; }
+    .page { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ① 헤더 -->
+  <div class="header">
+    <div class="header-icon">✨</div>
+    <div>
+      <h1>상상우리 매칭 시스템 — 기능 개선 보고서</h1>
+      <p>이전 버전(v1) 대비 개선 버전(v2) 변경 사항 비교 · 바이브 코딩 교육 프로젝트</p>
+    </div>
+    <div class="badge-date">2026년 5월 8일</div>
+  </div>
+
+  <!-- ② 요약 수치 -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-num blue">4</div>
+      <div class="stat-label">개 페이지<br>전면 개선</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num green">9</div>
+      <div class="stat-label">개 신규·개선<br>기능 추가</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num yellow">0</div>
+      <div class="stat-label">기존 기능<br>로직 변경 없음</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num purple">1</div>
+      <div class="stat-label">개 전역<br>네비게이션 바</div>
+    </div>
+  </div>
+
+  <!-- ③ 사용자 흐름 비교 -->
+  <div class="section">
+    <div class="section-title">사용자 흐름 비교 (이전 vs 개선)</div>
+    <div class="flow">
+      <div class="flow-subtitle">시니어가 앱에 접속해서 추천 일자리를 확인하기까지의 경로</div>
+      <div class="flow-cols">
+
+        <!-- 이전 -->
+        <div>
+          <div class="flow-col-title flow-before-title">❌ 이전 버전 (v1)</div>
+          <div style="padding:12px 0;">
+            <div class="flow-step step-before">
+              <span class="flow-step-icon">🌐</span>
+              <span>앱 접속 (/) → <strong>자동으로 /register 이동</strong><br>메인 페이지 없음</span>
+            </div>
+            <div class="flow-step step-before">
+              <span class="flow-step-icon">📝</span>
+              <span>시니어 정보 입력 후 제출<br>→ 성공 메시지만 표시</span>
+            </div>
+            <div class="flow-step step-before">
+              <span class="flow-step-icon">🔍</span>
+              <span>추천 보려면 <strong>URL에 senior_id 수동 입력</strong><br>담당자가 ID 별도 전달 필요</span>
+            </div>
+            <div class="flow-step step-before">
+              <span class="flow-step-icon">📋</span>
+              <span>추천 목록 확인<br>→ 배정 완료 처리 <strong>불가</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">→</div>
+
+        <!-- 개선 -->
+        <div>
+          <div class="flow-col-title flow-after-title">✅ 개선 버전 (v2)</div>
+          <div style="padding:12px 0;">
+            <div class="flow-step step-after">
+              <span class="flow-step-icon">🏠</span>
+              <span>앱 접속 (/) → <strong>허브 페이지</strong><br>통계·카드·매칭 규칙 한눈에 확인</span>
+            </div>
+            <div class="flow-step step-new">
+              <span class="flow-step-icon">🔗</span>
+              <span>상단 네비게이션 바로 이동<br>시니어 등록 / 추천 보기 / 관리자</span>
+            </div>
+            <div class="flow-step step-after">
+              <span class="flow-step-icon">📝</span>
+              <span>시니어 정보 입력 후 제출<br>→ 성공 박스에 <strong>"내 추천 바로 보기" 버튼</strong> 자동 표시</span>
+            </div>
+            <div class="flow-step step-after">
+              <span class="flow-step-icon">⭐</span>
+              <span>추천 목록 확인<br>→ <strong>배정 완료 버튼</strong>으로 즉시 처리</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 페이지별 변경 비교 테이블 -->
+  <div class="section">
+    <div class="section-title">페이지별 상세 변경 내역</div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th style="width:14%">페이지</th>
+          <th style="width:38%">이전 버전 (v1)</th>
+          <th style="width:48%">개선 버전 (v2)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag-page">/</span><br>메인</td>
+          <td class="before"><span class="icon-x">✗</span> /register 로 자동 리디렉션<br>메인 화면 없음</td>
+          <td class="after"><span class="icon-o">✓</span> 실시간 통계(시니어·공고·활성매칭) 표시<br><span class="icon-o">✓</span> 3개 기능 카드 (등록·추천·관리자)<br><span class="icon-o">✓</span> 매칭 점수 기준 시각화 패널</td>
+        </tr>
+        <tr>
+          <td><span class="tag-page">공통</span><br>네비게이션</td>
+          <td class="before"><span class="icon-x">✗</span> 페이지 간 이동 링크 없음<br>(각 페이지 하단 텍스트 링크만)</td>
+          <td class="after"><span class="icon-o">✓</span> 전역 고정 상단 바<br>어디서든 홈·등록·추천·관리자 이동</td>
+        </tr>
+        <tr>
+          <td><span class="tag-page">/register</span><br>시니어 등록</td>
+          <td class="before"><span class="icon-x">✗</span> 등록 성공 시 초록 메시지만 표시<br>추천 확인 방법 안내 없음</td>
+          <td class="after"><span class="icon-o">✓</span> 성공 박스 안에 <strong>"내 추천 일자리 바로 보기"</strong> 버튼<br>등록 즉시 자신의 추천 페이지로 이동 가능</td>
+        </tr>
+        <tr>
+          <td><span class="tag-page">/recommendations</span><br>추천 보기</td>
+          <td class="before"><span class="icon-x">✗</span> 제목 "추천 일자리 목록" (이름 없음)<br><span class="icon-x">✗</span> 배정 완료 처리 불가<br><span class="icon-x">✗</span> 2~3점 배지 "일부 적합" (모호한 표현)</td>
+          <td class="after"><span class="icon-o">✓</span> 제목 "{이름} 님께 맞는 일자리" (개인화)<br><span class="icon-o">✓</span> 카드마다 배정 완료 / 취소 토글 버튼<br><span class="icon-o">✓</span> 2~3점 배지 "보통" (명확한 표현)<br><span class="icon-o">✓</span> 배정 완료 건수 요약 표시</td>
+        </tr>
+        <tr>
+          <td><span class="tag-page">/admin</span><br>관리자</td>
+          <td class="before"><span class="icon-x">✗</span> 공고 삭제 확인 없음 (바로 삭제)<br><span class="icon-x">✗</span> 시니어 삭제 불가<br><span class="icon-x">✗</span> 시니어 검색·필터 없음<br><span class="icon-x">✗</span> 공고별 매칭 인원 표시 없음</td>
+          <td class="after"><span class="icon-o">✓</span> 공고/시니어 삭제 시 확인 다이얼로그<br><span class="icon-o">✓</span> 시니어 삭제 버튼 추가<br><span class="icon-o">✓</span> 이름·지역·직종 검색/필터 + 초기화<br><span class="icon-o">✓</span> 공고별 "매칭 N명" 열 추가<br><span class="icon-o">✓</span> 재매칭 버튼 헤더로 이동, 아이콘 추가</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ⑤ 매칭 점수 시각화 -->
+  <div class="section">
+    <div class="section-title">매칭 점수 체계 (메인 페이지에 신규 추가)</div>
+    <div class="score-section">
+      <div class="score-grid">
+        <div class="score-card s-blue">
+          <div class="score-num blue">+3점</div>
+          <div class="score-name">🏙️ 지역 일치</div>
+          <div class="score-desc">시니어 지역 = 공고 지역<br>서울특별시 ↔ 서울 자동 정규화</div>
+        </div>
+        <div class="score-card s-purple">
+          <div class="score-num purple">+2점</div>
+          <div class="score-name">💼 직종 일치</div>
+          <div class="score-desc">희망 직종 = 공고 직종<br>경비직 ↔ 경비/보안 자동 정규화</div>
+        </div>
+        <div class="score-card s-green">
+          <div class="score-num green">+1점</div>
+          <div class="score-name">📅 경력 충족</div>
+          <div class="score-desc">시니어 경력 ≥ 요구 경력<br>경력 없으면 요구 0년 공고 매칭</div>
+        </div>
+      </div>
+      <div class="badge-row">
+        <div class="badge badge-gold">6점 ★ 매우 적합</div>
+        <div class="badge badge-green2">4~5점 ● 적합</div>
+        <div class="badge badge-gray2">2~3점 보통</div>
+        <span style="font-size:14px;color:#9ca3af;align-self:center;">· 2점 미만은 목록에 미표시</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑥ 신규 기능 카드 -->
+  <div class="section">
+    <div class="section-title">신규 추가 기능 9가지</div>
+    <div class="feature-grid">
+      <div class="feature-card fc-blue">
+        <div class="feature-icon">🏠</div>
+        <div class="feature-title">메인 허브 페이지</div>
+        <div class="feature-desc">3개 페이지 진입 카드 + 실시간 통계 표시</div>
+      </div>
+      <div class="feature-card fc-purple">
+        <div class="feature-icon">🔗</div>
+        <div class="feature-title">전역 네비게이션 바</div>
+        <div class="feature-desc">모든 페이지 상단 고정 — 언제나 이동 가능</div>
+      </div>
+      <div class="feature-card fc-green">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">매칭 규칙 시각화</div>
+        <div class="feature-desc">점수 기준 (+3/+2/+1)을 메인에서 한눈에 확인</div>
+      </div>
+      <div class="feature-card fc-green">
+        <div class="feature-icon">🚀</div>
+        <div class="feature-title">등록 후 추천 직행</div>
+        <div class="feature-desc">등록 완료 즉시 "내 추천 바로 보기" 버튼 제공</div>
+      </div>
+      <div class="feature-card fc-yellow">
+        <div class="feature-icon">✅</div>
+        <div class="feature-title">배정 완료 토글</div>
+        <div class="feature-desc">추천 카드에서 배정 완료/취소 즉시 처리</div>
+      </div>
+      <div class="feature-card fc-indigo">
+        <div class="feature-icon">👥</div>
+        <div class="feature-title">공고별 매칭 인원</div>
+        <div class="feature-desc">관리자 공고 목록에 매칭된 시니어 수 표시</div>
+      </div>
+      <div class="feature-card fc-red">
+        <div class="feature-icon">🗑️</div>
+        <div class="feature-title">삭제 확인 다이얼로그</div>
+        <div class="feature-desc">공고·시니어 삭제 전 확인 창으로 실수 방지</div>
+      </div>
+      <div class="feature-card fc-red">
+        <div class="feature-icon">👤</div>
+        <div class="feature-title">시니어 삭제 기능</div>
+        <div class="feature-desc">관리자에서 오등록 시니어 삭제 가능</div>
+      </div>
+      <div class="feature-card fc-blue">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-title">시니어 검색·필터</div>
+        <div class="feature-desc">이름 검색 + 지역·직종 드롭다운 필터링</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑦ 푸터 -->
+  <div class="footer">
+    <strong>상상우리 매칭 시스템 v2</strong> · 바이브 코딩 교육 프로젝트 · 기존 DB 스키마·비즈니스 로직 무변경 · 로컬 전용 빌드
+  </div>
+
+</div>
+</body>
+</html>
